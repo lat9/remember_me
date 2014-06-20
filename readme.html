@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Automatic Login a.k.a. Remember Me</title>
+
+<style type="text/css">
+<!--
+a, a:active, a:visited { color: #006666; text-decoration: none; }
+a:hover { color:#00CC99; text-decoration: underline; }
+body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
+pre { margin: 20px; }
+H1, H2, H3, H4 { font-weight: bold }
+h1 { font-size: 20px; }
+h2 { font-size: 16px; }
+ol li, ul li { margin: 5px 0; }
+.corefile, .impt { color: red; }
+img { margin-left: 20px; max-width: 95%; }
+-->
+</style>
+</head>
+
+<body>
+<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.0, v1.5.1, v1.5.2 and v1.5.3</h1>
+<h3>Version 1.4.0</h3>
+<p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">http://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
+
+<hr />
+<h2>What it does</h2>
+<p>When a customer creates an account or logs in, s/he is offered the option (a &quot;Remember Me?&quot; checkbox) to be automatically logged into your website on subsequent visits.  If the customer checks this box, a cookie is set in the customer's browser; that cookie's name is <code>zcrm_xxxx</code> where &quot;xxxx&quot; is an MD5 hash of your store's name (as set in <em>Configuration-&gt;My Store</em>).  That cookie remains set (and provides a continued-login to your store) until:<p>
+<ol>
+  <li>the customer clicks the <em>Logoff</em> link in your store.</li>
+  <li>the cookie expires or is otherwise removed.</li>
+</ol>
+<p><strong>Security Note:</strong> The customer's password, as stored in the cookie, is a hashed version of customer's Zen Cart hashed password value, so the customer's actual password or password hash is never exposed.</p>
+
+<p>Once you have installed the plugin, the following additional configuration settings are available in <em>Configuration-&gt;Customer Details</em>:</p>
+<ul>
+  <li><b>Enable Automatic Login?</b> Controls the overall enabling of the plugin's feature. Set to <em>true</em> (default) or <em>false</em>.</li>
+  <li><b>Automatic Login (Cookie Lifetime)</b> Identifies the number of days that the &quot;Remember Me&quot; cookie should live (default: 14).</li>
+  <li><b>Automatic Login (Secret Key)</b> Contains the &quot;shared secret&quot; used to hash the customer's already hashed password.</li>
+</ul>
+
+<hr />
+<h2>Installation</h2>
+<p>This plugin currently has no <span class="corefile">core-file overwrites</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.2-RC2 was used as the Zen Cart basis for all template-override changes.</p>
+<ol>
+  <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
+  <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's template overrides to your store's current files and merge any changes required.</li>
+  <li>Log into your Zen Cart admin.</li>
+  <li>Copy the plugin's files to your store's file system.<ol>
+    <li>/includes/auto_loaders/config.remember_me.php</li>
+    <li>/includes/classes/observers/class.remember_me_observer.php</li>
+    <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
+    <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>
+    <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</li>
+    <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
+  </ol></li>
+  <li>Click the &quot;Admin Home&quot; link, then click <em>Configuration-&gt;Customer Details</em> to set the <em>Automatic Login</em> options to your liking.</li>
+</ol>
+
+<hr />
+<h2>Version History</h2>
+<h3>Authors' History</h3>
+<ol>
+  <li>Original Code by chris at linuxuser.at</li>
+  <li>Optional logoff and admin controls by kuroi</li>
+  <li>Packaged by ryk 23 Feb 2007</li>
+</ol>
+<h3>Versions and Changes</h3>
+<ul>
+  <li>v1.4.0, 2014-06-20 (lat9):<ul>
+    <li>Incorporate SQL install script into a PHP auto-install script.</li>
+    <li>Move run-time language changes into an extra_definitions file so that they're common between the login and create_account page.</li>
+    <li>Move processing to a run-time observer, no more core-file overwrites!</li>
+    <li>Modified information stored in the cookie and the means of validating the cookie's value.</li>
+    <li>Removed customer logoff as an option (for simplification); if the customer chooses to logoff from the store, the &quot;Remember Me&quot; cookie expires.</li>
+  </ul></li>
+  <li>v1.3, 2009-11-06 (Linxor):<ul>
+    <li>Updated script to be compatible with ZC v1.3.8a. This was mainly for changes to core files and tpl_login_default.php</li>
+    <li>Removed need to modify core file: includes/modules/pages/index/header_php.php</li>
+    <li>Added configuration item to set how long you want to remember the user.</li>
+    <li>The cookie is given a new lease when the user revisits the site.</li>
+    <li>Changed string in language file from "NB." to "Please Note:" since "NB." is less common vernacular.</li>
+  </ul></li>
+</ul>
+
+</body>
+</html>
