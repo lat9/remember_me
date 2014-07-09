@@ -22,7 +22,7 @@ img { margin-left: 20px; max-width: 95%; }
 
 <body>
 <h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.0, v1.5.1, v1.5.2 and v1.5.3</h1>
-<h3>Version 1.4.0</h3>
+<h3>Version 1.4.1</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">http://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
@@ -43,7 +43,7 @@ img { margin-left: 20px; max-width: 95%; }
 
 <hr />
 <h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file overwrites</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.2-RC2 was used as the Zen Cart basis for all template-override changes.</p>
+<p>This plugin currently has no <span class="corefile">core-file overwrites</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.3 was used as the Zen Cart basis for all template-override changes.</p>
 <ol>
   <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
   <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's template overrides to your store's current files and merge any changes required.</li>
@@ -69,6 +69,12 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v1.4.1, 2014-07-09 (lat9):<ul>
+    <li>Updated template changes to incorporate downwardly-compatible changes introduced in Zen Cart v1.5.3.  Changed:<ol>
+      <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>
+      <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</li>
+    </ol></li>
+  </ul></li>
   <li>v1.4.0, 2014-06-20 (lat9):<ul>
     <li>Incorporate SQL install script into a PHP auto-install script.</li>
     <li>Move run-time language changes into an extra_definitions file so that they're common between the login and create_account page.</li>
