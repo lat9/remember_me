@@ -1,0 +1,1 @@
+DELETE FROM configuration WHERE configuration_key LIKE 'PERMANENT_LOGIN%';
