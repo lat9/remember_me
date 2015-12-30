@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Automatic Login a.k.a. Remember Me</title>
 
 <style type="text/css">
@@ -15,14 +16,15 @@ h1 { font-size: 20px; }
 h2 { font-size: 16px; }
 ol li, ul li { margin: 5px 0; }
 .corefile, .impt { color: red; }
+.template { color: green; }
 img { margin-left: 20px; max-width: 95%; }
 -->
 </style>
 </head>
 
 <body>
-<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.0, v1.5.1, v1.5.2 and v1.5.3</h1>
-<h3>Version 1.4.1</h3>
+<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.0 through v1.5.5</h1>
+<h3>Version 1.4.2</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">http://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
@@ -43,20 +45,27 @@ img { margin-left: 20px; max-width: 95%; }
 
 <hr />
 <h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file overwrites</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.3 was used as the Zen Cart basis for all template-override changes.</p>
+<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.5 was used as the Zen Cart basis for all template-override changes.</p>
 <ol>
   <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
-  <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's template overrides to your store's current files and merge any changes required.</li>
+  <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's <span class="template"> two (2) template-overrides</span> to your store's current files and merge any changes required.</li>
   <li>Log into your Zen Cart admin.</li>
   <li>Copy the plugin's files to your store's file system.<ol>
     <li>/includes/auto_loaders/config.remember_me.php</li>
     <li>/includes/classes/observers/class.remember_me_observer.php</li>
     <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
-    <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>
-    <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</li>
+    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
+    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
     <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
   </ol></li>
   <li>Click the &quot;Admin Home&quot; link, then click <em>Configuration-&gt;Customer Details</em> to set the <em>Automatic Login</em> options to your liking.</li>
+</ol>
+<p><strong>Note:</strong> This plugin also includes a SQL uninstall file, present in the root directory.  That file should not be copied to your store during the installation process.</p>
+
+<h3>Un-Install</h3>
+<p>To remove this plugin from your Zen Cart store:</p><ol>
+  <li>Remove the files you copied during the install, editing out the plugin's changes to those two <span class="template">template-override</span> files.</li>
+  <li>Open the plugin's file /remember_me_uninstall.sql, copy &amp; paste that file's contents into your admin's <em>Tools-&gt;Install SQL Patches</em> and run that script to remove the database portion of the plugin.</li>
 </ol>
 
 <hr />
@@ -69,6 +78,13 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v1.4.2, 2015-12-30 (lat9):<ul>
+    <li>CHANGE: Update the <em>template-override</em> files to use downwardly-compatible changes introduced in Zen Cart v1.5.5.  Changed:<ol>
+      <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>
+      <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</li>
+    </ol></li>
+    <li>CHANGE: Added the file /remember_me_uninstall.sql, to remove the database changes on an uninstall of the plugin.</li>
+  </ul></li>
   <li>v1.4.1, 2014-07-09 (lat9):<ul>
     <li>Updated template changes to incorporate downwardly-compatible changes introduced in Zen Cart v1.5.3.  Changed:<ol>
       <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>

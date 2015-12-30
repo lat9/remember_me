@@ -6,10 +6,10 @@
  * Displays Create Account form.
  *
  * @package templateSystem
- * @copyright Copyright 2003-2014 Zen Cart Development Team
+ * @copyright Copyright 2003-2015 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version GIT: $Id: Author: DrByte  Sun Aug 19 09:47:29 2012 -0400 Modified in v1.5.1 $
+ * @version GIT: $Id: Author: DrByte  Modified in v1.5.5 $
  */
 ?>
 
@@ -120,14 +120,14 @@
 <fieldset>
 <legend><?php echo TABLE_HEADING_PHONE_FAX_DETAILS; ?></legend>
 <label class="inputLabel" for="telephone"><?php echo ENTRY_TELEPHONE_NUMBER; ?></label>
-<?php echo zen_draw_input_field('telephone', '', zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40') . ' id="telephone"') . (zen_not_null(ENTRY_TELEPHONE_NUMBER_TEXT) ? '<span class="alert">' . ENTRY_TELEPHONE_NUMBER_TEXT . '</span>': ''); ?>
+<?php echo zen_draw_input_field('telephone', '', zen_set_field_length(TABLE_CUSTOMERS, 'customers_telephone', '40') . ' id="telephone"', 'tel') . (zen_not_null(ENTRY_TELEPHONE_NUMBER_TEXT) ? '<span class="alert">' . ENTRY_TELEPHONE_NUMBER_TEXT . '</span>': ''); ?>
 
 <?php
   if (ACCOUNT_FAX_NUMBER == 'true') {
 ?>
 <br class="clearBoth" />
 <label class="inputLabel" for="fax"><?php echo ENTRY_FAX_NUMBER; ?></label>
-<?php echo zen_draw_input_field('fax', '', 'id="fax"') . (zen_not_null(ENTRY_FAX_NUMBER_TEXT) ? '<span class="alert">' . ENTRY_FAX_NUMBER_TEXT . '</span>': ''); ?>
+<?php echo zen_draw_input_field('fax', '', 'id="fax"', 'tel') . (zen_not_null(ENTRY_FAX_NUMBER_TEXT) ? '<span class="alert">' . ENTRY_FAX_NUMBER_TEXT . '</span>': ''); ?>
 <?php
   }
 ?>
@@ -149,11 +149,11 @@
 <fieldset>
 <legend><?php echo TABLE_HEADING_LOGIN_DETAILS; ?></legend>
 <label class="inputLabel" for="email-address"><?php echo ENTRY_EMAIL_ADDRESS; ?></label>
-<?php echo zen_draw_input_field('email_address', '', zen_set_field_length(TABLE_CUSTOMERS, 'customers_email_address', '40') . ' id="email-address"') . (zen_not_null(ENTRY_EMAIL_ADDRESS_TEXT) ? '<span class="alert">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>': ''); ?>
+<?php echo zen_draw_input_field('email_address', '', zen_set_field_length(TABLE_CUSTOMERS, 'customers_email_address', '40') . ' id="email-address"', 'email') . (zen_not_null(ENTRY_EMAIL_ADDRESS_TEXT) ? '<span class="alert">' . ENTRY_EMAIL_ADDRESS_TEXT . '</span>': ''); ?>
 <br class="clearBoth" />
 
 <?php
-  if ($phpBB->phpBB['installed'] == true) {
+  if ((is_object ($phpBB) && $phpBB->phpBB['installed'] == true) || (isset ($display_nick_field) && $display_nick_field == true)) {  //-remember_me-lat9  *** 1 of 2 ***
 ?>
 <label class="inputLabel" for="nickname"><?php echo ENTRY_NICK; ?></label>
 <?php echo zen_draw_input_field('nick','','id="nickname"') . (zen_not_null(ENTRY_NICK_TEXT) ? '<span class="alert">' . ENTRY_NICK_TEXT . '</span>': ''); ?>
@@ -171,9 +171,9 @@
 <br class="clearBoth" />
 
 <?php 
-//-BOF-remember_me-lat9 *** 1 of 1 ***
+//-BOF-remember_me-lat9 *** 2 of 2 ***
 echo $remember_me->create_checkbox ();
-//-EOF-remember_me-lat9 *** 1 of 1 ***
+//-EOF-remember_me-lat9 *** 2 of 2 ***
 ?>
 </fieldset>
 
