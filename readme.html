@@ -9,7 +9,7 @@
 <!--
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
-body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
+body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt, fieldset { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
 pre { margin: 20px; }
 H1, H2, H3, H4 { font-weight: bold }
 h1 { font-size: 20px; }
@@ -23,9 +23,9 @@ img { margin-left: 20px; max-width: 95%; }
 </head>
 
 <body>
-<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.0 through v1.5.5</h1>
-<h3>Version 1.4.2</h3>
-<p>Current Support Thread at Zen Cart Forums: <a href="http://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">http://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
+<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5</h1>
+<h3>Version 1.4.3</h3>
+<p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
 <h2>What it does</h2>
@@ -38,14 +38,18 @@ img { margin-left: 20px; max-width: 95%; }
 
 <p>Once you have installed the plugin, the following additional configuration settings are available in <em>Configuration-&gt;Customer Details</em>:</p>
 <ul>
-  <li><b>Enable Automatic Login?</b> Controls the overall enabling of the plugin's feature. Set to <em>true</em> (default) or <em>false</em>.</li>
+  <li><b>Enable Automatic Login?</b> Controls the overall enabling of the plugin's feature. Set to <em>true</em> or <em>false</em> (default).  Note that the default value has changed in v1.4.3 from <em>true</em> to <em>false</em>, since you should set your &quot;Secret Key&quot; prior to enabling!</li>
   <li><b>Automatic Login (Cookie Lifetime)</b> Identifies the number of days that the &quot;Remember Me&quot; cookie should live (default: 14).</li>
   <li><b>Automatic Login (Secret Key)</b> Contains the &quot;shared secret&quot; used to hash the customer's already hashed password.</li>
 </ul>
 
 <hr />
 <h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.5 was used as the Zen Cart basis for all template-override changes.</p>
+<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.5e's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.</p>
+<fieldset>
+  <legend>Upgrading to v1.4.3</legend>
+  <p>This version drops support for Zen Cart versions prior to 1.5.5 and updates the plugin's <span class="template">template-override</span> files to use Zen Cart 1.5.5e's template_default as the change-basis.  There is <em>no change</em> to the additions made by this plugin, so if you have made changes to either of these files it is safe to leave those files as-is for the <em>Remember Me</em> update.</p>
+</fieldset>
 <ol>
   <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
   <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's <span class="template"> two (2) template-overrides</span> to your store's current files and merge any changes required.</li>
@@ -53,6 +57,7 @@ img { margin-left: 20px; max-width: 95%; }
   <li>Copy the plugin's files to your store's file system.<ol>
     <li>/includes/auto_loaders/config.remember_me.php</li>
     <li>/includes/classes/observers/class.remember_me_observer.php</li>
+    <li>/includes/init_includes/init_remembered_cart.php</li>
     <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
     <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
     <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
@@ -78,6 +83,21 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v1.4.3, 2017-10-20 (lat9):<ul>
+    <li>CHANGE: Drops support for Zen Cart versions prior to 1.5.5.</li>
+    <li>CHANGE: Use the Zen Cart 1.5.5e version as the change-basis for <span class="template">template-overrides</span>.</li>
+    <li>CHANGE: The installation default for <em>Enable Automatic Login?</em> has changed from <em>true</em> to <em>false</em>.</li>
+    <li>BUGFIX: &quot;Remembered&quot; cart's contents not restored.</li>
+    <li>BUGFIX: Store the cookie at a <em>known</em> domain/path; interoperability issues with URL-modifying plugins.</li>
+    <li>The following files were changed or added:<ol>
+      <li>/includes/auto_loaders/config.remember_me.php</li>
+      <li>/includes/classes/observers/class.remember_me_observer.php</li>
+      <li>/includes/init_includes/init_remembered_cart.php</li>
+      <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
+      <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
+      <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
+    </ol></li>
+  </ul></li>
   <li>v1.4.2, 2015-12-30 (lat9):<ul>
     <li>CHANGE: Update the <em>template-override</em> files to use downwardly-compatible changes introduced in Zen Cart v1.5.5.  Changed:<ol>
       <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</li>
