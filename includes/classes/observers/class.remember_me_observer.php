@@ -3,6 +3,8 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.0 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
+// Version: 1.4.4
+//
 // Copyright (C) 2014-2017, Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG')) {
@@ -178,7 +180,7 @@ class remember_me_observer extends base
         $cookie_data['languages_code'] = $_SESSION['languages_code'];
         $cookie_data['cartIdSet'] = isset($_SESSION['cartID']);
         $cookie_data['securityToken'] = $_SESSION['securityToken'];
-        error_log(date('Y-m-d H:i:s') . " encodeCookie: " . var_export($cookie_data, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+//        error_log(date('Y-m-d H:i:s') . " encodeCookie: " . var_export($cookie_data, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
         
         return base64_encode(gzcompress(serialize($cookie_data), 9));
     }
@@ -200,7 +202,7 @@ class remember_me_observer extends base
                 }
             }
         }
-        error_log(date('Y-m-d H:i:s') . " decodeCookie: " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+//        error_log(date('Y-m-d H:i:s') . " decodeCookie: " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
         return $remember_info;
     }
     

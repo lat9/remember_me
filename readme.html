@@ -24,7 +24,7 @@ img { margin-left: 20px; max-width: 95%; }
 
 <body>
 <h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5</h1>
-<h3>Version 1.4.3</h3>
+<h3>Version 1.4.4</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
@@ -47,7 +47,7 @@ img { margin-left: 20px; max-width: 95%; }
 <h2>Installation</h2>
 <p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.5e's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.</p>
 <fieldset>
-  <legend>Upgrading to v1.4.3</legend>
+  <legend>Upgrading to v1.4.3 or later</legend>
   <p>This version drops support for Zen Cart versions prior to 1.5.5 and updates the plugin's <span class="template">template-override</span> files to use Zen Cart 1.5.5e's template_default as the change-basis.  There is <em>no change</em> to the additions made by this plugin, so if you have made changes to either of these files it is safe to leave those files as-is for the <em>Remember Me</em> update.</p>
 </fieldset>
 <ol>
@@ -83,6 +83,12 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v1.4.4, 2017-10-22 (lat9):<ul>
+    <li>BUGFIX: Comment-out debug code.</li>
+    <li>The following files were changed:<ol>
+      <li>/includes/classes/observers/class.remember_me_observer.php</li>
+    </ol></li>
+  </ul></li>
   <li>v1.4.3, 2017-10-20 (lat9):<ul>
     <li>CHANGE: Drops support for Zen Cart versions prior to 1.5.5.</li>
     <li>CHANGE: Use the Zen Cart 1.5.5e version as the change-basis for <span class="template">template-overrides</span>.</li>
