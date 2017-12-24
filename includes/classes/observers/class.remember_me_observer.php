@@ -1,14 +1,18 @@
 <?php
 // -----
-// Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.0 and later
+// Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.5 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 1.4.4
+// Version: 1.4.5
 //
 // Copyright (C) 2014-2017, Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
+}
+
+if (!defined('PERMANENT_LOGIN_DEBUG')) {
+    define('PERMANENT_LOGIN_DEBUG', 'false');  //-Set to either 'true' or 'false'
 }
 
 class remember_me_observer extends base 
@@ -23,6 +27,7 @@ class remember_me_observer extends base
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
+        $this->debug = (PERMANENT_LOGIN_DEBUG == 'true');
         
         // -----
         // This flag "coordinates" the customer's "remembered" login with the plugin's init_include module,
@@ -180,35 +185,46 @@ class remember_me_observer extends base
         $cookie_data['languages_code'] = $_SESSION['languages_code'];
         $cookie_data['cartIdSet'] = isset($_SESSION['cartID']);
         $cookie_data['securityToken'] = $_SESSION['securityToken'];
-//        error_log(date('Y-m-d H:i:s') . " encodeCookie: " . var_export($cookie_data, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
         
-        return base64_encode(gzcompress(serialize($cookie_data), 9));
+        $encoded_cookie = base64_encode(gzcompress(serialize($cookie_data), 9));
+        if ($this->debug) {
+            error_log(date('Y-m-d H:i:s') . " encodeCookie, value = '$encoded_cookie': " . var_export($cookie_data, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+        }
+        return $encoded_cookie;
     }
     
     protected function removeCookie()
     {
+        unset($_COOKIE[$this->cookie_name]);
+        $this->customer_remembered = false;
         $this->setCookie('', time() - 3600);
     }
     
     protected function decodeCookie()
     {
         $remember_info = false;
+        $cookie_value = 'Not valid';
         if (isset($_COOKIE[$this->cookie_name])) {
-            $remember_info = base64_decode($_COOKIE[$this->cookie_name]);
+            $cookie_value = $_COOKIE[$this->cookie_name];
+            $remember_info = base64_decode($cookie_value);
             if ($remember_info !== false) {
-                $remember_info = gzuncompress($remember_info);
-                if ($remember_info !== false) {
+                $remember_info = @gzuncompress($remember_info);
+                if ($remember_info === false) {
+                    trigger_error("gzuncompress error in decodeCookie, value = $cookie_value, _SERVER[HTTP_USER_AGENT] = " . $_SERVER['HTTP_USER_AGENT'] . ", _COOKIE = " . var_export($_COOKIE, true), E_USER_WARNING);
+                } else {
                     $remember_info = unserialize($remember_info);
                 }
             }
         }
-//        error_log(date('Y-m-d H:i:s') . " decodeCookie: " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+        if ($this->debug) {
+            error_log(date('Y-m-d H:i:s') . " decodeCookie, value = '$cookie_value': " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+        }
         return $remember_info;
     }
     
     protected function refreshCookie()
     {
-        if (isset ($_COOKIE[$this->cookie_name])) {
+        if (isset($_COOKIE[$this->cookie_name])) {
             $cookie_data = $this->decodeCookie();
             if (!is_array($cookie_data)) {
                 $this->removeCookie();
