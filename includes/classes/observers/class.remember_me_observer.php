@@ -23,7 +23,7 @@ class remember_me_observer extends base
     
     public function __construct() 
     {
-        $this->enabled = (defined('PERMANENT_LOGIN') && PERMANENT_LOGIN == 'true');
+        $this->enabled = (defined('PERMANENT_LOGIN') && PERMANENT_LOGIN == 'true') && !isset($_SESSION['COWOA']);
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
@@ -41,7 +41,7 @@ class remember_me_observer extends base
         //
         if (!$_SESSION['customer_id'] && $this->enabled) {
             $remember_info = $this->decodeCookie();
-            if (!is_array($remember_info)) {
+            if ($remember_info === false) {
                 $this->removeCookie();
             } else {
                 $this->checkRememberCustomer($remember_info);
@@ -195,7 +195,6 @@ class remember_me_observer extends base
     
     protected function removeCookie()
     {
-        unset($_COOKIE[$this->cookie_name]);
         $this->customer_remembered = false;
         $this->setCookie('', time() - 3600);
     }
@@ -204,7 +203,7 @@ class remember_me_observer extends base
     {
         $remember_info = false;
         $cookie_value = 'Not valid';
-        if (isset($_COOKIE[$this->cookie_name])) {
+        if (isset($_COOKIE[$this->cookie_name]) && $_COOKIE[$this->cookie_name] != 'deleted') {
             $cookie_value = $_COOKIE[$this->cookie_name];
             $remember_info = base64_decode($cookie_value);
             if ($remember_info !== false) {
@@ -219,18 +218,16 @@ class remember_me_observer extends base
         if ($this->debug) {
             error_log(date('Y-m-d H:i:s') . " decodeCookie, value = '$cookie_value': " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
         }
-        return $remember_info;
+        return (is_array($remember_info)) ? $remember_info : false;
     }
     
     protected function refreshCookie()
     {
-        if (isset($_COOKIE[$this->cookie_name])) {
-            $cookie_data = $this->decodeCookie();
-            if (!is_array($cookie_data)) {
-                $this->removeCookie();
-            } else {
-                $this->setCookie($this->encodeCookie($cookie_data), time() + $this->cookie_lifetime);
-            }
+        $cookie_data = $this->decodeCookie();
+        if ($cookie_data === false) {
+            $this->removeCookie();
+        } else {
+            $this->setCookie($this->encodeCookie($cookie_data), time() + $this->cookie_lifetime);
         }
     }
     
