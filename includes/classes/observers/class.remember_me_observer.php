@@ -3,9 +3,9 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.5 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 1.4.5, 2017-12-28
+// Version: 1.4.6, 2018-01-01
 //
-// Copyright (C) 2014-2017, Vinos de Frutas Tropicales
+// Copyright (C) 2014-2018, Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -23,7 +23,7 @@ class remember_me_observer extends base
     
     public function __construct() 
     {
-        $this->enabled = (defined('PERMANENT_LOGIN') && PERMANENT_LOGIN == 'true') && !isset($_SESSION['COWOA'] && !isset($_SESSION['is_guest_checkout']));
+        $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN == 'true') && !isset($_SESSION['COWOA']) && !(function_exists('zen_in_guest_checkout') && zen_in_guest_checkout()));
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
