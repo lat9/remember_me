@@ -1,7 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Automatic Login a.k.a. Remember Me</title>
 
@@ -17,14 +17,15 @@ h2 { font-size: 16px; }
 ol li, ul li { margin: 5px 0; }
 .corefile, .impt { color: red; }
 .template { color: green; }
+.added { color: blue; }
 img { margin-left: 20px; max-width: 95%; }
 -->
 </style>
 </head>
 
 <body>
-<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5</h1>
-<h3>Version 1.4.6</h3>
+<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5 and later</h1>
+<h3>Version 2.0.0</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
@@ -45,10 +46,16 @@ img { margin-left: 20px; max-width: 95%; }
 
 <hr />
 <h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.  <strong>Note:</strong> Zen Cart v1.5.5e's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.</p>
+<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
+<p><strong>Notes:</strong></p>
+<ol>
+    <li>Zen Cart v1.5.6c's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.  If your store runs on a Zen Cart 1.5.5 variant, note that the <code>tpl_modules_create_account.php</code> now places the country-entry prior to the address-entry!</li>
+    <li>Changes to <span class="template">template-overrides</span> now include <em>minor</em>, future-proofing, changes so that PHP errors aren't issued if you choose to uninstall the plugin without removing its template-related changes.</li>
+    <li>v2.0.0 (and later) now includes required updates to the <em><b>One-Page Checkout</b></em> plugin's alternate form of the login page, using v2.3.1 of that plugin as the change-basis.</li>
+</ol>
 <fieldset>
   <legend>Upgrading to v1.4.3 or later</legend>
-  <p>This version drops support for Zen Cart versions prior to 1.5.5 and updates the plugin's <span class="template">template-override</span> files to use Zen Cart 1.5.5e's template_default as the change-basis.  There is <em>no change</em> to the additions made by this plugin, so if you have made changes to either of these files it is safe to leave those files as-is for the <em>Remember Me</em> update.</p>
+  <p>This version drops support for Zen Cart versions prior to 1.5.5 and updates the plugin's <span class="template">template-override</span> files to use Zen Cart 1.5.6c's <code>template_default</code> as the change-basis.  As of v2.0.0, there are some <em>minor</em>, future-proofing, changes made to the template files so that PHP errors aren't issued if you choose to uninstall the plugin without removing those template-related changes.</p>
 </fieldset>
 <ol>
   <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
@@ -60,6 +67,7 @@ img { margin-left: 20px; max-width: 95%; }
     <li>/includes/init_includes/init_remembered_cart.php</li>
     <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
     <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
+    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_guest.php</span></li>
     <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
     <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
   </ol></li>
@@ -83,6 +91,16 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v2.0.0-beta2, 2020-04-04 (lat9):<ul>
+    <li>CHANGE: Updates for more recent versions of PHP/MySQL/Zen Cart, plus <em>One-Page Checkout</em> interoperation.</li>
+    <li>The following files were changed or <span class="added">added</span>:<ol>
+      <li>/includes/classes/observers/class.remember_me_observer.php</li>
+      <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
+      <li><span class="added">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_guest.php</span></li>
+      <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
+      <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
+    </ol></li>
+  </ul></li>
   <li>v1.4.6, 2018-01-01 (lat9):<ul>
     <li>BUGFIX: Correct parentheses-mismatch introduced in v1.4.5, resulting in debug-log generation.</li>
     <li>The following files were changed:<ol>

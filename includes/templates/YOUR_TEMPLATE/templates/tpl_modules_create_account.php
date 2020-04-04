@@ -6,10 +6,10 @@
  * Displays Create Account form.
  *
  * @package templateSystem
- * @copyright Copyright 2003-2016 Zen Cart Development Team
+ * @copyright Copyright 2003-2018 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: rbarbour zcadditions.com Fri Feb 26 00:03:33 2016 -0500 Modified in v1.5.5 $
+ * @version $Id: rbarbour zcadditions.com Tue Aug 21 07:00:53 2018 -0400 Modified in v1.5.6 $
  */
 ?>
 
@@ -60,6 +60,10 @@
 <label class="inputLabel" for="lastname"><?php echo ENTRY_LAST_NAME; ?></label>
 <?php echo zen_draw_input_field('lastname', '', zen_set_field_length(TABLE_CUSTOMERS, 'customers_lastname', '40') . ' id="lastname" placeholder="' . ENTRY_LAST_NAME_TEXT . '"'. ((int)ENTRY_LAST_NAME_MIN_LENGTH > 0 ? ' required' : '')); ?>
 <br class="clearBoth" />
+<label class="inputLabel" for="country"><?php echo ENTRY_COUNTRY; ?></label>
+<?php echo zen_get_country_list('zone_country_id', $selected_country, 'id="country" ' . ($flag_show_pulldown_states == true ? 'onchange="update_zone(this.form);"' : '')) . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?>
+<br class="clearBoth" />
+<br />
 
 <label class="inputLabel" for="street-address"><?php echo ENTRY_STREET_ADDRESS; ?></label>
   <?php echo zen_draw_input_field('street_address', '', zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_street_address', '40') . ' id="street-address" placeholder="' . ENTRY_STREET_ADDRESS_TEXT . '"'. ((int)ENTRY_STREET_ADDRESS_MIN_LENGTH > 0 ? ' required' : '')); ?>
@@ -110,10 +114,6 @@
 <label class="inputLabel" for="postcode"><?php echo ENTRY_POST_CODE; ?></label>
 <?php echo zen_draw_input_field('postcode', '', zen_set_field_length(TABLE_ADDRESS_BOOK, 'entry_postcode', '40') . ' id="postcode" placeholder="' . ENTRY_POST_CODE_TEXT . '"' . ((int)ENTRY_POSTCODE_MIN_LENGTH > 0 ? ' required' : '')
 ); ?>
-<br class="clearBoth" />
-
-<label class="inputLabel" for="country"><?php echo ENTRY_COUNTRY; ?></label>
-<?php echo zen_get_country_list('zone_country_id', $selected_country, 'id="country" ' . ($flag_show_pulldown_states == true ? 'onchange="update_zone(this.form);"' : '')) . (zen_not_null(ENTRY_COUNTRY_TEXT) ? '<span class="alert">' . ENTRY_COUNTRY_TEXT . '</span>': ''); ?>
 <br class="clearBoth" />
 </fieldset>
 
@@ -171,9 +171,9 @@
 <br class="clearBoth" />
 
 <?php 
-//-BOF-remember_me-lat9 *** 1 of 1 ***
-echo $remember_me->create_checkbox();
-//-EOF-remember_me-lat9 *** 1 of 1 ***
+//-bof-remember_me-lat9 *** 1 of 1 ***
+echo (isset($remember_me) && is_object($remember_me)) ? $remember_me->create_checkbox() : '';
+//-bof-remember_me-lat9 *** 1 of 1 ***
 ?>
 </fieldset>
 

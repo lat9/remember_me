@@ -50,9 +50,9 @@
 <br class="clearBoth" />
 
 <?php
-//-BOF-remember_me-lat9 *** 1 of 2 ***
-echo $remember_me->create_checkbox();
-//-EOF-remember_me-lat9 *** 1 of 2 ***
+//-bof-remember_me-lat9 *** 1 of 2 ***
+echo (isset($remember_me) && is_object($remember_me)) ? $remember_me->create_checkbox() : '';
+//-bof-remember_me-lat9 *** 1 of 2 ***
 ?>
 
 <div class="buttonRow forward"><?php echo zen_image_submit(BUTTON_IMAGE_LOGIN, BUTTON_LOGIN_ALT); ?></div>
@@ -83,9 +83,9 @@ echo $remember_me->create_checkbox();
 <br class="clearBoth" />
 
 <?php
-//-BOF-remember_me-lat9 *** 2 of 2 *** 
-echo $remember_me->create_checkbox();
-//-EOF-remember_me-lat9 *** 2 of 2 ***
+//-bof-remember_me-lat9 *** 2 of 2 ***
+echo (isset($remember_me) && is_object($remember_me)) ? $remember_me->create_checkbox() : '';
+//-bof-remember_me-lat9 *** 2 of 2 ***
 ?>
 <?php echo zen_draw_hidden_field('securityToken', $_SESSION['securityToken']); ?>
 </fieldset>
