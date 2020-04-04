@@ -3,9 +3,9 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.5 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 1.4.6, 2018-01-01
+// Version: 2.0.0, 2020-04-04
 //
-// Copyright (C) 2014-2018, Vinos de Frutas Tropicales
+// Copyright (C) 2014-2020, Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -23,11 +23,20 @@ class remember_me_observer extends base
     
     public function __construct() 
     {
+        // -----
+        // Check to see that the plugin is enabled via configuration and that the current session is not associated
+        // with a COWOA or guest checkout.  If any case fails, there's nothing else to be done.
+        //
         $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN == 'true') && !isset($_SESSION['COWOA']) && !(function_exists('zen_in_guest_checkout') && zen_in_guest_checkout()));
+        if (!$this->enabled) {
+            return;
+        }
+        
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
         $this->debug = (PERMANENT_LOGIN_DEBUG == 'true');
+        $this->logfilename = DIR_FS_LOGS . '/remember_me_' . date('Ym') . '.log';
         
         // -----
         // This flag "coordinates" the customer's "remembered" login with the plugin's init_include module,
@@ -39,7 +48,7 @@ class remember_me_observer extends base
         // -----
         // If a customer is not currently logged in, but there's a valid "Remember Me" cookie present ... then "Remember Them"!
         //
-        if (!$_SESSION['customer_id'] && $this->enabled) {
+        if (!$this->customerIsLoggedIn()) {
             $remember_info = $this->decodeCookie();
             if ($remember_info === false) {
                 $this->removeCookie();
@@ -77,7 +86,7 @@ class remember_me_observer extends base
             //
             case 'NOTIFY_LOGIN_SUCCESS': 
             case 'NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD':
-                if ($this->enabled && isset($_POST['permLogin']) && $_POST['permLogin'] == 1) {
+                if (isset($_POST['permLogin']) && $_POST['permLogin'] == 1) {
                     $password_info = $db->Execute(
                         "SELECT customers_password 
                            FROM " . TABLE_CUSTOMERS . " 
@@ -99,14 +108,17 @@ class remember_me_observer extends base
             // When the customer has chosen to click the "Logoff" link, expire any "Remember Me" cookies that might be present.
             //
             case 'NOTIFY_HEADER_START_LOGOFF':
-                if ($this->enabled && !empty($_SESSION['customer_id'])) {
-                    $this->removeCookie();
-                }
+                $this->removeCookie();
                 break;
                 
             default:
                 break;
         }
+    }
+    
+    protected function customerIsLoggedIn()
+    {
+        return ((function_exists('zen_is_logged_in') && zen_is_logged_in()) || !empty($_SESSION['customer_id']));
     }
 
     protected function checkRememberCustomer($remember_info) 
@@ -122,7 +134,6 @@ class remember_me_observer extends base
         );
         if ($customer_info->EOF || md5($this->secret . $customer_info->fields['customers_password']) != $customers_hashed_password) {
             $this->removeCookie();
-          
         } else {
             $this->customer_remembered = true;  //- Indicates that the customer's cart should be restored once the cart is instantiated.
 
@@ -164,7 +175,7 @@ class remember_me_observer extends base
     
     public function restoreRememberedCart()
     {
-        if ($this->customer_remembered) {
+        if ($this->enabled && $this->customer_remembered) {
             $_SESSION['cart']->restore_contents();
             if ($this->setCartId) {
                 $_SESSION['cartID'] = $_SESSION['cart']->cartID;
@@ -174,7 +185,15 @@ class remember_me_observer extends base
 
     public function create_checkbox() 
     {
-        return ($this->enabled) ? ('<label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>' . zen_draw_checkbox_field ('permLogin', '1', false, 'id="permLogin"') . '<br class="clearBoth" />') : '';
+        if (!$this->enabled) {
+            return '';
+        }
+        $return_value = 
+            '<br /><label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>' .
+            zen_draw_checkbox_field ('permLogin', '1', false, 'id="permLogin"') .
+            '<br /><div class="clearBoth"></div>';
+
+        return $return_value;
     }
     
     protected function encodeCookie($cookie_data)
@@ -185,11 +204,11 @@ class remember_me_observer extends base
         $cookie_data['languages_code'] = $_SESSION['languages_code'];
         $cookie_data['cartIdSet'] = isset($_SESSION['cartID']);
         $cookie_data['securityToken'] = $_SESSION['securityToken'];
-        
+
         $encoded_cookie = base64_encode(gzcompress(serialize($cookie_data), 9));
-        if ($this->debug) {
-            error_log(date('Y-m-d H:i:s') . " encodeCookie, value = '$encoded_cookie': " . var_export($cookie_data, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
-        }
+
+        $this->debugTrace("encodeCookie, value = '$encoded_cookie': " . var_export($cookie_data, true));
+
         return $encoded_cookie;
     }
     
@@ -209,16 +228,30 @@ class remember_me_observer extends base
             if ($remember_info !== false) {
                 $remember_info = @gzuncompress($remember_info);
                 if ($remember_info === false) {
-                    trigger_error("gzuncompress error in decodeCookie, value = $cookie_value, _SERVER[HTTP_USER_AGENT] = " . $_SERVER['HTTP_USER_AGENT'] . ", _COOKIE = " . var_export($_COOKIE, true), E_USER_WARNING);
+                    $this->debugTrace("decodeCookie: gzuncompress error in decodeCookie, value = $cookie_value, remember_info = " . var_export($remember_info, true));
                 } else {
                     $remember_info = unserialize($remember_info);
+                    if (!is_array($remember_info)) {
+                        $this->debugTrace('decodeCookie: Non-array value found: ' . var_export($remember_info, true));
+                        $remember_info = false;
+                    } else {
+                        $remember_keys = array_keys($remember_info);
+                        $required_keys = array('id', 'password', 'language', 'languages_id', 'languages_code', 'cartIdSet', 'securityToken');
+                        foreach ($required_keys as $key) {
+                            if (!in_array($key, $remember_keys)) {
+                                $this->debugTrace('decodeCookie: Missing required keys. ' . var_export($remember_info, true));
+                                $remember_info = false;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
-        if ($this->debug) {
-            error_log(date('Y-m-d H:i:s') . " decodeCookie, value = '$cookie_value': " . var_export($remember_info, true) . PHP_EOL, 3, DIR_FS_LOGS . '/remember_me.log');
+        if ($remember_info !== false) {
+            $this->debugTrace("decodeCookie, value = '$cookie_value': " . var_export($remember_info, true));
         }
-        return (is_array($remember_info)) ? $remember_info : false;
+        return $remember_info;
     }
     
     protected function refreshCookie()
@@ -251,5 +284,11 @@ class remember_me_observer extends base
         }
         setcookie($this->cookie_name, $value, $expiration, $this->path, $this->domain);
     }
- 
+    
+    protected function debugTrace($message)
+    {
+        if ($this->debug) {
+            error_log(date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL, 3, $this->logfilename);
+        }
+    }
 }
