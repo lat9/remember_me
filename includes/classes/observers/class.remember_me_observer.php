@@ -14,6 +14,9 @@ if (!defined('IS_ADMIN_FLAG')) {
 if (!defined('PERMANENT_LOGIN_DEBUG')) {
     define('PERMANENT_LOGIN_DEBUG', 'false');  //-Set to either 'true' or 'false'
 }
+if (!defined('PERMANENT_LOGIN_CHECKBOX_DEFAULT')) {
+    define('PERMANENT_LOGIN_CHECKBOX_DEFAULT', 'false');  //-Set to either 'true' or 'false' (configuration setting for v2.0.0 and later).
+}
 
 class remember_me_observer extends base 
 {
@@ -34,6 +37,7 @@ class remember_me_observer extends base
         
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
+        $this->checkbox_default = (PERMANENT_LOGIN_CHECKBOX_DEFAULT == 'true');
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
         $this->debug = (PERMANENT_LOGIN_DEBUG == 'true');
         $this->logfilename = DIR_FS_LOGS . '/remember_me_' . date('Ym') . '.log';
@@ -190,7 +194,7 @@ class remember_me_observer extends base
         }
         $return_value = 
             '<br /><label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>' .
-            zen_draw_checkbox_field ('permLogin', '1', false, 'id="permLogin"') .
+            zen_draw_checkbox_field ('permLogin', '1', $this->checkbox_default, 'id="permLogin"') .
             '<br /><div class="clearBoth"></div>';
 
         return $return_value;

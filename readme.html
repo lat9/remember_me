@@ -42,6 +42,7 @@ img { margin-left: 20px; max-width: 95%; }
   <li><b>Enable Automatic Login?</b> Controls the overall enabling of the plugin's feature. Set to <em>true</em> or <em>false</em> (default).  Note that the default value has changed in v1.4.3 from <em>true</em> to <em>false</em>, since you should set your &quot;Secret Key&quot; prior to enabling!</li>
   <li><b>Automatic Login (Cookie Lifetime)</b> Identifies the number of days that the &quot;Remember Me&quot; cookie should live (default: 14).</li>
   <li><b>Automatic Login (Secret Key)</b> Contains the &quot;shared secret&quot; used to hash the customer's already hashed password.</li>
+  <li><b>Automatic Login (Checkbox Default)</b> Identifies whether (<em>true</em>) or not (<em>false</em>, the default) to pre-check the <b>Remember Me?</b> checkbox on the <code>login</code> and <code>create_account</code> pages.</li>
 </ul>
 
 <hr />
@@ -93,6 +94,7 @@ img { margin-left: 20px; max-width: 95%; }
 <ul>
   <li>v2.0.0-beta2, 2020-04-04 (lat9):<ul>
     <li>CHANGE: Updates for more recent versions of PHP/MySQL/Zen Cart, plus <em>One-Page Checkout</em> interoperation.</li>
+    <li>CHANGE: Add a configuration setting (<b>Configuration / Customer Details / Automatic Login (Checkbox Default)</b>).</li>
     <li>The following files were changed or <span class="added">added</span>:<ol>
       <li>/includes/classes/observers/class.remember_me_observer.php</li>
       <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
