@@ -193,9 +193,9 @@ class remember_me_observer extends base
             return '';
         }
         $return_value = 
-            '<br /><label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>' .
+            '<br />' .
             zen_draw_checkbox_field ('permLogin', '1', $this->checkbox_default, 'id="permLogin"') .
-            '<br /><div class="clearBoth"></div>';
+            '<label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>';
 
         return $return_value;
     }
