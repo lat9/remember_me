@@ -3,7 +3,7 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.5 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 2.0.0, 2020-04-04
+// Version: 2.0.0, 2020-04-05
 //
 // Copyright (C) 2014-2020, Vinos de Frutas Tropicales
 //
@@ -289,9 +289,15 @@ class remember_me_observer extends base
         setcookie($this->cookie_name, $value, $expiration, $this->path, $this->domain);
     }
     
+    // -----
+    // Output, if enabled and a customer is **not** logged in, a debug message to a log-file.
+    //
+    // The output is restricted to non-logged-in customers to capture the information only when
+    // a cookie is being checked so that the trace-log isn't filled with unimportant information.
+    //
     protected function debugTrace($message)
     {
-        if ($this->debug) {
+        if (!$this->customerIsLoggedIn() && $this->debug) {
             error_log(date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL, 3, $this->logfilename);
         }
     }
