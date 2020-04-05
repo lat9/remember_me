@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Automatic Login a.k.a. Remember Me</title>
 
-<style type="text/css">
+<style>
 <!--
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
@@ -53,6 +53,7 @@ img { margin-left: 20px; max-width: 95%; }
     <li>Zen Cart v1.5.6c's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.  If your store runs on a Zen Cart 1.5.5 variant, note that the <code>tpl_modules_create_account.php</code> now places the country-entry prior to the address-entry!</li>
     <li>Changes to <span class="template">template-overrides</span> now include <em>minor</em>, future-proofing, changes so that PHP errors aren't issued if you choose to uninstall the plugin without removing its template-related changes.</li>
     <li>v2.0.0 (and later) now includes required updates to the <em><b>One-Page Checkout</b></em> plugin's alternate form of the login page, using v2.3.1 of that plugin as the change-basis.</li>
+    <li>This plugin creates <em>a single cookie</em> for your store in a customer's browser.  If a customer shares their computer with someone else after requesting to be &quot;remembered&quot;, those additional persons will have access to that customer's account.</li>
 </ol>
 <fieldset>
   <legend>Upgrading to v1.4.3 or later</legend>
@@ -92,11 +93,14 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
-  <li>v2.0.0-beta2, 2020-04-04 (lat9):<ul>
+  <li>v2.0.0, 2020-04-05 (lat9):<ul>
     <li>CHANGE: Updates for more recent versions of PHP/MySQL/Zen Cart, plus <em>One-Page Checkout</em> interoperation.</li>
     <li>CHANGE: Add a configuration setting (<b>Configuration / Customer Details / Automatic Login (Checkbox Default)</b>).</li>
+    <li>CHANGE: <b>Remember Me?</b> checkbox, put checkbox before label and &quot;enhance&quot; hover-title text.</li>
+    <li>CHANGE: Update debug-trace to output only if a customer's not logged in.</li>
     <li>The following files were changed or <span class="added">added</span>:<ol>
       <li>/includes/classes/observers/class.remember_me_observer.php</li>
+      <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
       <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
       <li><span class="added">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_guest.php</span></li>
       <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
