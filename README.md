@@ -1,4 +1,4 @@
-# Remember Me (Automatic Login) v1.4.6
+# Remember Me (Automatic Login) v2.0.0
 
 This Zen Cart plugin supports Zen Carts v1.5.5 and later, providing stores with a way to offer their customers and automatic login by saving a cookie in the customer's browser.
 
