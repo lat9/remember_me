@@ -286,7 +286,23 @@ class remember_me_observer extends base
             );
             $this->path = DIR_WS_CATALOG;
         }
-        setcookie($this->cookie_name, $value, $expiration, $this->path, $this->domain);
+        // -----
+        // Starting with PHP 7.3, the setcookie function now accepts an alternate array
+        // input, enabling the setting of the "SameSite" cookie attribute.
+        //
+        if (PHP_VERSION_ID < 70300) {
+            setcookie($this->cookie_name, $value, $expiration, $this->path, $this->domain, false, true);
+        } else {
+            $cookie_options = array(
+                'expires' => $expiration,
+                'path' => $this->path,
+                'domain' => $this->domain,
+                'secure' => false,
+                'httponly' => true,
+                'samesite' => 'Strict'
+            );
+            setcookie($this->cookie_name, $value, $cookie_options);
+        }
     }
     
     // -----
