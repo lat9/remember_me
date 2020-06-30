@@ -1,7 +1,7 @@
 <?php
 // -----
 // Part of the One-Page Checkout plugin, provided under GPL 2.0 license by lat9 (cindy@vinosdefrutastropicales.com).
-// Copyright (C) 2017, Vinos de Frutas Tropicales.  All rights reserved.
+// Copyright (C) 2017-2020, Vinos de Frutas Tropicales.  All rights reserved.
 //
 ?>
 <div class="centerColumn" id="loginOpcDefault">
@@ -10,6 +10,13 @@
 if ($messageStack->size('login') > 0) {
     echo $messageStack->output('login');
 }
+
+// -----
+// The 'presumed' name of the login-form has changed in zc157 and is used by the login-page's
+// onload javascript processing.  Determine the name to use for that form, based on the
+// site's current Zen Cart version.
+//
+$login_formname = (PROJECT_VERSION_MAJOR . '.' . PROJECT_VERSION_MINOR >= '1.5.7') ? 'loginForm' : 'login';
 
 $block_class = 'opc-block-' . $num_columns;
 foreach ($column_blocks as $display_blocks) {
@@ -27,7 +34,7 @@ foreach ($column_blocks as $display_blocks) {
         <h2><?php echo HEADING_RETURNING_CUSTOMER_OPC; ?></h2>
         <div class="information"><?php echo TEXT_RETURNING_CUSTOMER_OPC; ?></div>
 <?php 
-                    echo zen_draw_form('login', zen_href_link(FILENAME_LOGIN, 'action=process' . (isset($_GET['gv_no']) ? '&gv_no=' . preg_replace('/[^0-9.,%]/', '', $_GET['gv_no']) : ''), 'SSL'), 'post', 'id="loginForm"'); 
+                    echo zen_draw_form($login_formname, zen_href_link(FILENAME_LOGIN, 'action=process' . (isset($_GET['gv_no']) ? '&gv_no=' . preg_replace('/[^0-9.,%]/', '', $_GET['gv_no']) : ''), 'SSL'), 'post', 'id="loginForm"'); 
 ?>
         <div class="opc-label"><?php echo ENTRY_EMAIL_ADDRESS; ?></div>
 <?php 
@@ -41,6 +48,14 @@ foreach ($column_blocks as $display_blocks) {
 <?php
 //-bof-remember_me-lat9 *** 1 of 1 ***
 echo (isset($remember_me) && is_object($remember_me)) ? $remember_me->create_checkbox() : '';
+
+// -----
+// Added for "Remember Me" v2.0.1, updated to use the OPC v2.3.2 version of the template which has an
+// additional language constant.  If that constant's not defined, define it!
+//
+if (!defined('BUTTON_GUEST_CHECKOUT_CONTINUE')) {
+    define('BUTTON_GUEST_CHECKOUT_CONTINUE', 'Continue Guest Checkout');
+}
 //-bof-remember_me-lat9 *** 1 of 1 ***
 ?>
         <div class="buttonRow" id="opc-pwf"><?php echo '<a href="' . zen_href_link(FILENAME_PASSWORD_FORGOTTEN, '', 'SSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?></div>
@@ -77,7 +92,7 @@ echo (isset($remember_me) && is_object($remember_me)) ? $remember_me->create_che
 <?php
                     } else {
 ?>
-        <div class="buttonRow"><a href="<?php echo zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'); ?>" rel="nofollow"><?php echo zen_image_button(BUTTON_IMAGE_CHECKOUT, BUTTON_CHECKOUT_ALT); ?></a></div>
+        <div class="buttonRow"><a href="<?php echo zen_href_link(FILENAME_CHECKOUT_ONE, '', 'SSL'); ?>" rel="nofollow"><?php echo zen_image_button(BUTTON_IMAGE_CONTINUE, BUTTON_GUEST_CHECKOUT_CONTINUE); ?></a></div>
 <?php
                     }
                     break;
