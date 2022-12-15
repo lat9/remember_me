@@ -131,7 +131,7 @@ class remember_me_observer extends base
         $customers_id = (isset($remember_info['id'])) ? (int)$remember_info['id'] : 0;
         $customers_hashed_password = (isset($remember_info['password'])) ? $remember_info['password'] : '~~~~';
         $customer_info = $db->Execute(
-            "SELECT customers_firstname, customers_lastname, customers_password, customers_default_address_id, customers_authorization, customers_referral 
+            "SELECT customers_firstname, customers_lastname, customers_password, customers_email_address, customers_default_address_id, customers_authorization, customers_referral 
                FROM " . TABLE_CUSTOMERS . " 
               WHERE customers_id = $customers_id 
               LIMIT 1"
@@ -159,6 +159,7 @@ class remember_me_observer extends base
             $check_country_query = $db->bindVars($check_country_query, ':addressBookID', $customer_info->fields['customers_default_address_id'], 'integer');
             $check_country = $db->Execute($check_country_query);
         
+            $_SESSION['customers_email_address'] = $customer_info->fields['customers_email_address'];
             $_SESSION['customer_default_address_id'] = $customer_info->fields['customers_default_address_id'];
             $_SESSION['customers_authorization'] = $customer_info->fields['customers_authorization'];
             $_SESSION['customer_first_name'] = $customer_info->fields['customers_firstname'];
