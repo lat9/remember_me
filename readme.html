@@ -10,7 +10,7 @@ a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
 body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt, fieldset { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
 pre { margin: 20px; }
-H1, H2, H3, H4 { font-weight: bold }
+h1, h2, h3, h4 { font-weight: bold }
 h1 { font-size: 20px; }
 h2 { font-size: 16px; }
 ol li, ul li { margin: 5px 0; }
@@ -93,6 +93,7 @@ img { margin-left: 20px; max-width: 95%; }
 <ul>
   <li>v2.1.0-beta1, 2024-11-02 (lat9, marco-pm):<ul>
     <li>BUGFIX: Include <code>customers_email_address</code> in restored session.</li>
+    <li>BUGFIX: Correct PHP deprecations by pre-defining all observer-class properties.</li>
     <li>The following files were changed:<ol>
         <li>/includes/classes/observers/class.remember_me_observer.php</li>
     </ol></li>
