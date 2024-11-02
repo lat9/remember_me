@@ -1,6 +1,6 @@
 <?php
 // -----
-// Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.5 and later
+// Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.8 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
 // Version: 2.1.0, 2024-11-02
@@ -31,13 +31,13 @@ class remember_me_observer extends base
     protected string $domain;
     protected string $path;
 
-    public function __construct() 
+    public function __construct()
     {
         // -----
         // Check to see that the plugin is enabled via configuration and that the current session is not associated
         // with a COWOA or guest checkout.  If any case fails, there's nothing else to be done.
         //
-        $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN === 'true') && !isset($_SESSION['COWOA']) && !(function_exists('zen_in_guest_checkout') && zen_in_guest_checkout()));
+        $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN === 'true') && !isset($_SESSION['COWOA']) && !zen_in_guest_checkout());
         if (!$this->enabled) {
             return;
         }
@@ -46,7 +46,7 @@ class remember_me_observer extends base
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->checkbox_default = (PERMANENT_LOGIN_CHECKBOX_DEFAULT === 'true');
         $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
-        $this->debug = (PERMANENT_LOGIN_DEBUG == 'true');
+        $this->debug = (PERMANENT_LOGIN_DEBUG === 'true');
         $this->logfilename = DIR_FS_LOGS . '/remember_me_' . date('Ym') . '.log';
 
         // -----
@@ -77,11 +77,13 @@ class remember_me_observer extends base
         // -----
         // Set up to listen for any related observers.
         //
-        $this->attach ($this, [
+        $this->attach($this, [
             /* From /includes/modules/create_account.php */
-            'NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD', 
+            'NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD',
+
             /* From /includes/modules/pages/login/header_php.php */
             'NOTIFY_LOGIN_SUCCESS',
+
             /* From /includes/modules/pages/logoff/header_php.php */
             'NOTIFY_HEADER_START_LOGOFF',
         ]);
@@ -114,7 +116,7 @@ class remember_me_observer extends base
                     }
                 }
                 break;
-                
+
             // -----
             // When the customer has chosen to click the "Logoff" link, expire any "Remember Me" cookies that might be present.
             //
@@ -129,21 +131,21 @@ class remember_me_observer extends base
 
     protected function customerIsLoggedIn()
     {
-        return ((function_exists('zen_is_logged_in') && zen_is_logged_in()) || !empty($_SESSION['customer_id']));
+        return zen_is_logged_in();
     }
 
     protected function checkRememberCustomer($remember_info)
     {
         global $db;
-        $customers_id = (isset($remember_info['id'])) ? (int)$remember_info['id'] : 0;
-        $customers_hashed_password = (isset($remember_info['password'])) ? $remember_info['password'] : '~~~~';
+        $customers_id = (int)($remember_info['id'] ?? 0);
+        $customers_hashed_password = $remember_info['password'] ?? '~~~~';
         $customer_info = $db->Execute(
-            "SELECT customers_firstname, customers_lastname, customers_password, customers_email_address, customers_default_address_id, customers_authorization, customers_referral 
-               FROM " . TABLE_CUSTOMERS . " 
-              WHERE customers_id = $customers_id 
+            "SELECT customers_firstname, customers_lastname, customers_password, customers_email_address, customers_default_address_id, customers_authorization, customers_referral
+               FROM " . TABLE_CUSTOMERS . "
+              WHERE customers_id = $customers_id
               LIMIT 1"
         );
-        if ($customer_info->EOF || md5($this->secret . $customer_info->fields['customers_password']) != $customers_hashed_password) {
+        if ($customer_info->EOF || md5($this->secret . $customer_info->fields['customers_password']) !== $customers_hashed_password) {
             $this->removeCookie();
         } else {
             $this->customer_remembered = true;  //- Indicates that the customer's cart should be restored once the cart is instantiated.
@@ -155,7 +157,7 @@ class remember_me_observer extends base
             $_SESSION['languages_code'] = $remember_info['languages_code'];
             $_SESSION['securityToken'] = $remember_info['securityToken'];
 
-            $this->setCartId = (isset($remember_info['cartIdSet']) && $remember_info['cartIdSet'] === true);
+            $this->setCartId = $remember_info['cartIdSet'] ?? false;
 
             $check_country_query =
                 "SELECT entry_country_id, entry_zone_id
@@ -165,7 +167,7 @@ class remember_me_observer extends base
                   LIMIT 1";
             $check_country_query = $db->bindVars($check_country_query, ':addressBookID', $customer_info->fields['customers_default_address_id'], 'integer');
             $check_country = $db->Execute($check_country_query);
-        
+
             $_SESSION['customers_email_address'] = $customer_info->fields['customers_email_address'];
             $_SESSION['customer_default_address_id'] = $customer_info->fields['customers_default_address_id'];
             $_SESSION['customers_authorization'] = $customer_info->fields['customers_authorization'];
@@ -298,19 +300,15 @@ class remember_me_observer extends base
         // Starting with PHP 7.3, the setcookie function now accepts an alternate array
         // input, enabling the setting of the "SameSite" cookie attribute.
         //
-        if (PHP_VERSION_ID < 70300) {
-            setcookie($this->cookie_name, $value, $expiration, $this->path, $this->domain, false, true);
-        } else {
-            $cookie_options = [
-                'expires' => $expiration,
-                'path' => $this->path,
-                'domain' => $this->domain,
-                'secure' => false,
-                'httponly' => true,
-                'samesite' => 'Strict'
-            ];
-            setcookie($this->cookie_name, $value, $cookie_options);
-        }
+        $cookie_options = [
+            'expires' => $expiration,
+            'path' => $this->path,
+            'domain' => $this->domain,
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ];
+        setcookie($this->cookie_name, $value, $cookie_options);
     }
 
     // -----

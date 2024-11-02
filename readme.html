@@ -6,8 +6,8 @@
 <title>Automatic Login a.k.a. Remember Me</title>
 
 <style>
-a, a:active, a:visited { color: #006666; text-decoration: none; }
-a:hover { color:#00CC99; text-decoration: underline; }
+a, a:active, a:visited { color: #006666;}
+a:hover { color:#00CC99; }
 body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt, fieldset { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
 pre { margin: 20px; }
 h1, h2, h3, h4 { font-weight: bold }
@@ -17,12 +17,14 @@ ol li, ul li { margin: 5px 0; }
 .corefile, .impt { color: red; }
 .template { color: green; }
 .added { color: blue; }
+.removed { text-decoration: line-through; }
+.smaller { font-size: smaller; }
 img { margin-left: 20px; max-width: 95%; }
 </style>
 </head>
 
 <body>
-<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5 and later</h1>
+<h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.8 and later</h1>
 <h3>Version 2.1.0</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
@@ -35,50 +37,41 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <p><strong>Security Note:</strong> The customer's password, as stored in the cookie, is a hashed version of customer's Zen Cart hashed password value, so the customer's actual password or password hash is never exposed.</p>
 
-<p>Once you have installed the plugin, the following additional configuration settings are available in <em>Configuration-&gt;Customer Details</em>:</p>
+<p>Once you have installed the plugin, the following additional configuration settings are available in <em>Configuration :: Customer Details</em>:</p>
 <ul>
   <li><b>Enable Automatic Login?</b> Controls the overall enabling of the plugin's feature. Set to <em>true</em> or <em>false</em> (default).  Note that the default value has changed in v1.4.3 from <em>true</em> to <em>false</em>, since you should set your &quot;Secret Key&quot; prior to enabling!</li>
   <li><b>Automatic Login (Cookie Lifetime)</b> Identifies the number of days that the &quot;Remember Me&quot; cookie should live (default: 14).</li>
   <li><b>Automatic Login (Secret Key)</b> Contains the &quot;shared secret&quot; used to hash the customer's already hashed password.</li>
   <li><b>Automatic Login (Checkbox Default)</b> Identifies whether (<em>true</em>) or not (<em>false</em>, the default) to pre-check the <b>Remember Me?</b> checkbox on the <code>login</code> and <code>create_account</code> pages.</li>
 </ul>
-
-<hr />
-<h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have three (3) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
 <p><strong>Notes:</strong></p>
 <ol>
-    <li>Zen Cart v1.5.6c's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.  If your store runs on a Zen Cart 1.5.5 variant, note that the <code>tpl_modules_create_account.php</code> now places the country-entry prior to the address-entry!</li>
-    <li>Changes to <span class="template">template-overrides</span> now include <em>minor</em>, future-proofing, changes so that PHP errors aren't issued if you choose to uninstall the plugin without removing its template-related changes.</li>
-    <li>v2.0.0 (and later) now includes required updates to the <em><b>One-Page Checkout</b></em> plugin's alternate form of the login page, using v2.3.1 of that plugin as the change-basis.</li>
+    <li>v2.1.0 (and later) no longer distributes the plugin's required changes to your site's template files.  See <a href="https://github.com/lat9/remember_me/wiki/Required-Template-Overrides" target="_blank">this</a> GitHub Wiki article for additional information.</li>
     <li>This plugin creates <em>a single cookie</em> for your store in a customer's browser.  If a customer shares their computer with someone else after requesting to be &quot;remembered&quot;, those additional persons will have access to that customer's account.</li>
 </ol>
-<fieldset>
-  <legend>Upgrading to v1.4.3 or later</legend>
-  <p>This version drops support for Zen Cart versions prior to 1.5.5 and updates the plugin's <span class="template">template-override</span> files to use Zen Cart 1.5.6c's <code>template_default</code> as the change-basis.  As of v2.0.0, there are some <em>minor</em>, future-proofing, changes made to the template files so that PHP errors aren't issued if you choose to uninstall the plugin without removing those template-related changes.</p>
-</fieldset>
+
+<hr>
+<h2>Installation</h2>
+<p>This plugin  has no <span class="corefile">core-file</span> overwrites; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
 <ol>
-  <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name and the YOUR_TEMPLATE directory to match your current template's name.</li>
-  <li>Use a program like <em>WinMerge</em> or <em>Beyond Compare</em> to compare the plugin's <span class="template"> two (2) template-overrides</span> to your store's current files and merge any changes required.</li>
+  <li>Unzip the plugin's package file.  Rename the YOUR_ADMIN folder to match your secret admin folder's name.</li>
   <li>Log into your Zen Cart admin.</li>
   <li>Copy the plugin's files to your store's file system.<ol>
     <li>/includes/auto_loaders/config.remember_me.php</li>
     <li>/includes/classes/observers/class.remember_me_observer.php</li>
     <li>/includes/init_includes/init_remembered_cart.php</li>
     <li>/includes/languages/english/extra_definitions/remember_me_definitions.php</li>
-    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span></li>
-    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_guest.php</span></li>
-    <li><span class="template">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span></li>
     <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
   </ol></li>
-  <li>Click the &quot;Admin Home&quot; link, then click <em>Configuration-&gt;Customer Details</em> to set the <em>Automatic Login</em> options to your liking.</li>
+  <li>Click the &quot;Admin Home&quot; link, then click <em>Configuration :: Customer Details</em> to set the <em>Automatic Login</em> options to your liking.</li>
+  <li>If this is an initial installation, don't forget to make the plugin's <a href="https://github.com/lat9/remember_me/wiki/Required-Template-Overrides" target="_blank">required template file changes</a>!</li>
 </ol>
 <p><strong>Note:</strong> This plugin also includes a SQL uninstall file, present in the root directory.  That file should not be copied to your store during the installation process.</p>
 
 <h3>Un-Install</h3>
 <p>To remove this plugin from your Zen Cart store:</p><ol>
   <li>Remove the files you copied during the install, editing out the plugin's changes to those two <span class="template">template-override</span> files.</li>
-  <li>Open the plugin's file /remember_me_uninstall.sql, copy &amp; paste that file's contents into your admin's <em>Tools-&gt;Install SQL Patches</em> and run that script to remove the database portion of the plugin.</li>
+  <li>Open the plugin's file /remember_me_uninstall.sql, copy &amp; paste that file's contents into your admin's <em>Tools :: Install SQL Patches</em> and run that script to remove the database portion of the plugin.</li>
 </ol>
 
 <hr />
@@ -94,8 +87,12 @@ img { margin-left: 20px; max-width: 95%; }
   <li>v2.1.0-beta1, 2024-11-02 (lat9, marco-pm):<ul>
     <li>BUGFIX: Include <code>customers_email_address</code> in restored session.</li>
     <li>BUGFIX: Correct PHP deprecations by pre-defining all observer-class properties.</li>
+    <li>CHANGE: Drop support for Zen Cart versions prior to 1.5.8; template-override files no longer included in this distribution.</li>
     <li>The following files were changed:<ol>
         <li>/includes/classes/observers/class.remember_me_observer.php</li>
+        <li><span class="removed">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_default.php</span> <span class="smaller">(Removed from this distribution <em>only</em>)</span></li>
+        <li><span class="removed">/includes/templates/YOUR_TEMPLATE/templates/tpl_login_guest.php</span> <span class="smaller">(Removed from this distribution <em>only</em>)</span></li>
+        <li><span class="removed">/includes/templates/YOUR_TEMPLATE/templates/tpl_modules_create_account.php</span> <span class="smaller">(Removed from this distribution <em>only</em>)</span></li>
     </ol></li>
   </ul></li>
   <li>v2.0.1, 2020-06-30 (lat9):<ul>
