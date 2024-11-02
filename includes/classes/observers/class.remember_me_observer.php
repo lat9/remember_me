@@ -184,6 +184,12 @@ class remember_me_observer extends base
                   WHERE customers_info_id = $customers_id
                   LIMIT 1"
             );
+
+            // -----
+            // Redirect the 'remembered' customer to the site's homepage, just in case they timed-out
+            // on a page that requires additional session information (e.g. checkout).
+            //
+            zen_redirect(zen_href_link(FILENAME_DEFAULT));
         }
     }
 
