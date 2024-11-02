@@ -2,11 +2,10 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Automatic Login a.k.a. Remember Me</title>
 
 <style>
-<!--
 a, a:active, a:visited { color: #006666; text-decoration: none; }
 a:hover { color:#00CC99; text-decoration: underline; }
 body, p, h1, h2, h3, h4, h5, h6, li, td, dd, dt, fieldset { font-family: Verdana, AvantGarde, Tahoma, Arial, sans-serif; font-size: 10pt; color: black; padding: 0px; margin: 20px; }
@@ -19,18 +18,17 @@ ol li, ul li { margin: 5px 0; }
 .template { color: green; }
 .added { color: blue; }
 img { margin-left: 20px; max-width: 95%; }
--->
 </style>
 </head>
 
 <body>
 <h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.5 and later</h1>
-<h3>Version 2.0.0</h3>
+<h3>Version 2.1.0</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
 <hr />
 <h2>What it does</h2>
-<p>When a customer creates an account or logs in, s/he is offered the option (a &quot;Remember Me?&quot; checkbox) to be automatically logged into your website on subsequent visits.  If the customer checks this box, a cookie is set in the customer's browser; that cookie's name is <code>zcrm_xxxx</code> where &quot;xxxx&quot; is an MD5 hash of your store's name (as set in <em>Configuration-&gt;My Store</em>).  That cookie remains set (and provides a continued-login to your store) until:<p>
+<p>When a customer creates an account or logs in, s/he is offered the option (a &quot;Remember Me?&quot; checkbox) to be automatically logged into your website on subsequent visits.  If the customer checks this box, a cookie is set in the customer's browser; that cookie's name is <code>zcrm_xxxx</code> where &quot;xxxx&quot; is an MD5 hash of your store's name (as set in <em>Configuration :: My Store</em>).  That cookie remains set (and provides a continued-login to your store) until:<p>
 <ol>
   <li>the customer clicks the <em>Logoff</em> link in your store.</li>
   <li>the cookie expires or is otherwise removed.</li>
@@ -47,7 +45,7 @@ img { margin-left: 20px; max-width: 95%; }
 
 <hr />
 <h2>Installation</h2>
-<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have two (2) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
+<p>This plugin currently has no <span class="corefile">core-file</span> overwrites, but it does have three (3) <span class="template">template-overrides</span>; you should <strong>always</strong> backup your cart's database and files prior to making any changes.</p>
 <p><strong>Notes:</strong></p>
 <ol>
     <li>Zen Cart v1.5.6c's <code>template_default</code> template was used as the Zen Cart basis for all template-override changes.  If your store runs on a Zen Cart 1.5.5 variant, note that the <code>tpl_modules_create_account.php</code> now places the country-entry prior to the address-entry!</li>
@@ -93,6 +91,12 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v2.1.0-beta1, 2024-11-02 (lat9, marco-pm):<ul>
+    <li>BUGFIX: Include <code>customers_email_address</code> in restored session.</li>
+    <li>The following files were changed:<ol>
+        <li>/includes/classes/observers/class.remember_me_observer.php</li>
+    </ol></li>
+  </ul></li>
   <li>v2.0.1, 2020-06-30 (lat9):<ul>
     <li>BUGFIX: Store the cookie using the &quot;SameSite&quot; attribute; available <em>only</em> for PHP 7.3 or later!</li>
     <li>CHANGE: Align with <em>OPC</em> v2.3.1's version of the guest-login template.</li>
