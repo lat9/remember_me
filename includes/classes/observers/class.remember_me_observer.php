@@ -3,7 +3,7 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.8 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 2.1.0, 2024-11-02
+// Version: 2.1.0
 //
 // Copyright (C) 2014-2024, Vinos de Frutas Tropicales
 //
@@ -35,9 +35,9 @@ class remember_me_observer extends base
     {
         // -----
         // Check to see that the plugin is enabled via configuration and that the current session is not associated
-        // with a COWOA or guest checkout.  If any case fails, there's nothing else to be done.
+        // with a COWOA or guest checkout or an admin's "Place Order" login.  If any case fails, there's nothing else to be done.
         //
-        $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN === 'true') && !isset($_SESSION['COWOA']) && !zen_in_guest_checkout());
+        $this->enabled = ((defined('PERMANENT_LOGIN') && PERMANENT_LOGIN === 'true') && !isset($_SESSION['COWOA']) && !zen_in_guest_checkout() && !isset($_SESSION['emp_admin_login']));
         if (!$this->enabled) {
             return;
         }
@@ -86,6 +86,9 @@ class remember_me_observer extends base
 
             /* From /includes/modules/pages/logoff/header_php.php */
             'NOTIFY_HEADER_START_LOGOFF',
+
+            /* From /includes/classes/OnePageCheckout.php */
+            'NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED',
         ]);
 
     }
@@ -99,6 +102,7 @@ class remember_me_observer extends base
             //
             case 'NOTIFY_LOGIN_SUCCESS': 
             case 'NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD':
+            case 'NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED':
                 if (isset($_POST['permLogin']) && $_POST['permLogin'] == 1) {
                     $password_info = $db->Execute(
                         "SELECT customers_password
