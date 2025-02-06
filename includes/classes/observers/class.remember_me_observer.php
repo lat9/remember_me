@@ -3,9 +3,9 @@
 // Part of the "Remember Me" plugin, modified for operation under Zen Cart v1.5.8 and later
 // by Cindy Merkin (aka lat9) of Vinos de Frutas Tropicales (vinosdefrutastropicales.com).
 //
-// Version: 2.1.0
+// Version: 2.1.1
 //
-// Copyright (C) 2014-2024, Vinos de Frutas Tropicales
+// Copyright (C) 2014-2025, Vinos de Frutas Tropicales
 //
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
@@ -30,6 +30,7 @@ class remember_me_observer extends base
     protected bool $customer_remembered;
     protected string $domain;
     protected string $path;
+    protected bool $setCartId;
 
     public function __construct()
     {
@@ -93,14 +94,14 @@ class remember_me_observer extends base
 
     }
 
-    public function update(&$class, $eventID, $paramsArray)
+    public function update(&$class, string $eventID, $paramsArray): void
     {
         global $db;
         switch ($eventID) {
             // -----
             // Upon successful login or account creation, if the customer has checked the "Remember Me" field then create the required cookie to keep them logged in.
             //
-            case 'NOTIFY_LOGIN_SUCCESS': 
+            case 'NOTIFY_LOGIN_SUCCESS':
             case 'NOTIFY_MODULE_CREATE_ACCOUNT_ADDED_CUSTOMER_RECORD':
             case 'NOTIFY_OPC_CREATE_ACCOUNT_ORDER_UPDATED':
                 if (isset($_POST['permLogin']) && $_POST['permLogin'] == 1) {
@@ -133,12 +134,12 @@ class remember_me_observer extends base
         }
     }
 
-    protected function customerIsLoggedIn()
+    protected function customerIsLoggedIn(): bool
     {
         return zen_is_logged_in();
     }
 
-    protected function checkRememberCustomer($remember_info)
+    protected function checkRememberCustomer(array $remember_info): void
     {
         global $db;
         $customers_id = (int)($remember_info['id'] ?? 0);
@@ -161,7 +162,7 @@ class remember_me_observer extends base
             $_SESSION['languages_code'] = $remember_info['languages_code'];
             $_SESSION['securityToken'] = $remember_info['securityToken'];
 
-            $this->setCartId = $remember_info['cartIdSet'] ?? false;
+            $this->setCartId = (bool)($remember_info['cartIdSet'] ?? false);
 
             $check_country_query =
                 "SELECT entry_country_id, entry_zone_id
@@ -197,17 +198,17 @@ class remember_me_observer extends base
         }
     }
 
-    public function restoreRememberedCart()
+    public function restoreRememberedCart(): void
     {
         if ($this->enabled && $this->customer_remembered) {
             $_SESSION['cart']->restore_contents();
-            if ($this->setCartId) {
+            if ($this->setCartId === true) {
                 $_SESSION['cartID'] = $_SESSION['cart']->cartID;
             }
         }
     }
 
-    public function create_checkbox()
+    public function create_checkbox(): string
     {
         if (!$this->enabled) {
             return '';
@@ -220,7 +221,7 @@ class remember_me_observer extends base
         return $return_value;
     }
 
-    protected function encodeCookie($cookie_data)
+    protected function encodeCookie(array $cookie_data): string
     {
         $cookie_data['currency'] = $_SESSION['currency'];
         $cookie_data['language'] = $_SESSION['language'];
@@ -236,13 +237,13 @@ class remember_me_observer extends base
         return $encoded_cookie;
     }
 
-    protected function removeCookie()
+    protected function removeCookie(): void
     {
         $this->customer_remembered = false;
         $this->setCookie('', time() - 3600);
     }
 
-    protected function decodeCookie()
+    protected function decodeCookie(): bool|array
     {
         $remember_info = false;
         $cookie_value = 'Not valid';
@@ -278,7 +279,7 @@ class remember_me_observer extends base
         return $remember_info;
     }
 
-    protected function refreshCookie()
+    protected function refreshCookie(): void
     {
         $cookie_data = $this->decodeCookie();
         if ($cookie_data === false) {
@@ -292,7 +293,7 @@ class remember_me_observer extends base
     // Set the "remember-me" cookie for the specific path associated with the current
     // store's configuration.
     //
-    protected function setCookie($value, $expiration)
+    protected function setCookie(string $value, int $expiration): void
     {
         if (!isset($this->domain)) {
             $this->domain = str_replace(
@@ -327,7 +328,7 @@ class remember_me_observer extends base
     // The output is restricted to non-logged-in customers to capture the information only when
     // a cookie is being checked so that the trace-log isn't filled with unimportant information.
     //
-    protected function debugTrace($message)
+    protected function debugTrace(string $message): void
     {
         if (!$this->customerIsLoggedIn() && $this->debug) {
             error_log(date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL, 3, $this->logfilename);

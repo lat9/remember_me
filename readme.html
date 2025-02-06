@@ -25,10 +25,10 @@ img { margin-left: 20px; max-width: 95%; }
 
 <body>
 <h1>Remember Me (Automatic Login) &mdash;  for Zen Cart v1.5.8 and later</h1>
-<h3>Version 2.1.0</h3>
+<h3>Version 2.1.1</h3>
 <p>Current Support Thread at Zen Cart Forums: <a href="https://www.zen-cart.com/forum/showthread.php?t=57982" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=57982</a></p>
 
-<hr />
+<hr>
 <h2>What it does</h2>
 <p>When a customer creates an account or logs in, s/he is offered the option (a &quot;Remember Me?&quot; checkbox) to be automatically logged into your website on subsequent visits.  If the customer checks this box, a cookie is set in the customer's browser; that cookie's name is <code>zcrm_xxxx</code> where &quot;xxxx&quot; is an MD5 hash of your store's name (as set in <em>Configuration :: My Store</em>).  That cookie remains set (and provides a continued-login to your store) until:<p>
 <ol>
@@ -74,7 +74,7 @@ img { margin-left: 20px; max-width: 95%; }
   <li>Open the plugin's file /remember_me_uninstall.sql, copy &amp; paste that file's contents into your admin's <em>Tools :: Install SQL Patches</em> and run that script to remove the database portion of the plugin.</li>
 </ol>
 
-<hr />
+<hr>
 <h2>Version History</h2>
 <h3>Authors' History</h3>
 <ol>
@@ -84,6 +84,12 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
+  <li>v2.1.1-beta1, 2025-02-05 (lat9):<ul>
+    <li>BUGFIX: Class property <var>setCartId</var> must be defined prior to use or a PHP Deprecated log is created.</li>
+    <li>The following files were changed:<ol>
+        <li>/includes/classes/observers/class.remember_me_observer.php</li>
+    </ol></li>
+  </ul></li>
   <li>v2.1.0, 2024-11-04 (lat9, marco-pm):<ul>
     <li>BUGFIX: Include <code>customers_email_address</code> in restored session.</li>
     <li>BUGFIX: Correct PHP deprecations by pre-defining all observer-class properties.</li>
