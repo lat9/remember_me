@@ -213,10 +213,19 @@ class remember_me_observer extends base
         if (!$this->enabled) {
             return '';
         }
-        $return_value =
-            '<br>' .
-            zen_draw_checkbox_field ('permLogin', '1', $this->checkbox_default, 'id="permLogin"') .
-            '<label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>';
+
+        if (!function_exists('zca_bootstrap_active') || zca_bootstrap_active() === false) {
+            $return_value =
+                '<br>' .
+                zen_draw_checkbox_field('permLogin', '1', $this->checkbox_default, 'id="permLogin"') .
+                '<label class="checkboxLabel" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>';
+        } else {
+            $return_value =
+                '<div class ="custom-control custom-checkbox pt-2 pb-2">' .
+                    zen_draw_checkbox_field ('permLogin', '1', $this->checkbox_default, 'id="permLogin"') .
+                    '<label class="custom-control-label" for="permLogin" title="' . TEXT_REMEMBER_ME_ALT . '">' . TEXT_REMEMBER_ME . '</label>' .
+                '</div>';
+        }
 
         return $return_value;
     }
