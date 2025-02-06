@@ -11,12 +11,8 @@ if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-if (!defined('PERMANENT_LOGIN_DEBUG')) {
-    define('PERMANENT_LOGIN_DEBUG', 'false');  //-Set to either 'true' or 'false'
-}
-if (!defined('PERMANENT_LOGIN_CHECKBOX_DEFAULT')) {
-    define('PERMANENT_LOGIN_CHECKBOX_DEFAULT', 'false');  //-Set to either 'true' or 'false' (configuration setting for v2.0.0 and later).
-}
+zen_define_default('PERMANENT_LOGIN_DEBUG', 'false');               //-Set to either 'true' or 'false'
+zen_define_default('PERMANENT_LOGIN_CHECKBOX_DEFAULT', 'false');    //-Set to either 'true' or 'false' (configuration setting for v2.0.0 and later).
 
 class remember_me_observer extends base
 {
@@ -27,10 +23,8 @@ class remember_me_observer extends base
     protected string $cookie_name;
     protected bool $debug;
     protected string $logfilename;
-    protected bool $customer_remembered;
     protected string $domain;
     protected string $path;
-    protected bool $setCartId;
 
     public function __construct()
     {
@@ -49,13 +43,6 @@ class remember_me_observer extends base
         $this->cookie_name = 'zcrm_' . hash('md5', STORE_NAME);
         $this->debug = (PERMANENT_LOGIN_DEBUG === 'true');
         $this->logfilename = DIR_FS_LOGS . '/remember_me_' . date('Ym') . '.log';
-
-        // -----
-        // This flag "coordinates" the customer's "remembered" login with the plugin's init_include module,
-        // allowing the customer's cart to be recorded within the currently-active session.  Used by the
-        // restoreRememberedCart class-function and possibly set by the checkRememberCustomer class-function.
-        //
-        $this->customer_remembered = false;
 
         // -----
         // If a customer is not currently logged in, but there's a valid "Remember Me" cookie present ... then "Remember Them"!
@@ -153,8 +140,6 @@ class remember_me_observer extends base
         if ($customer_info->EOF || hash('md5', $this->secret . $customer_info->fields['customers_password']) !== $customers_hashed_password) {
             $this->removeCookie();
         } else {
-            $this->customer_remembered = true;  //- Indicates that the customer's cart should be restored once the cart is instantiated.
-
             $_SESSION['customer_id'] = $customers_id;
             $_SESSION['currency'] = $remember_info['currency'];
             $_SESSION['language'] = $remember_info['language'];
@@ -162,7 +147,7 @@ class remember_me_observer extends base
             $_SESSION['languages_code'] = $remember_info['languages_code'];
             $_SESSION['securityToken'] = $remember_info['securityToken'];
 
-            $this->setCartId = (bool)($remember_info['cartIdSet'] ?? false);
+            $_SESSION['setRememberedCart'] = (bool)($remember_info['cartIdSet'] ?? false); //- Indicates that the customer's cart should be restored once the cart is instantiated.
 
             $check_country_query =
                 "SELECT entry_country_id, entry_zone_id
@@ -180,7 +165,6 @@ class remember_me_observer extends base
             $_SESSION['customer_last_name'] = $customer_info->fields['customers_lastname'];
             $_SESSION['customer_country_id'] = $check_country->fields['entry_country_id'];
             $_SESSION['customer_zone_id'] = $check_country->fields['entry_zone_id'];
-            $_SESSION['customer_remembered'] = true;
 
             $db->Execute(
                 "UPDATE " . TABLE_CUSTOMERS_INFO . "
@@ -200,12 +184,16 @@ class remember_me_observer extends base
 
     public function restoreRememberedCart(): void
     {
-        if ($this->enabled && $this->customer_remembered) {
+        // -----
+        // If the customer was just 'remembered', restore their cart if
+        // there were previously items in their cart.
+        //
+        if (isset($_SESSION['setRememberedCart'])) {
             $_SESSION['cart']->restore_contents();
-            if ($this->setCartId === true) {
-                $_SESSION['cartID'] = $_SESSION['cart']->cartID;
-            }
+            $_SESSION['cartID'] = $_SESSION['cart']->cartID;
+            unset($_SESSION['setRememberedCart']);
         }
+
     }
 
     public function create_checkbox(): string
@@ -248,7 +236,6 @@ class remember_me_observer extends base
 
     protected function removeCookie(): void
     {
-        $this->customer_remembered = false;
         $this->setCookie('', time() - 3600);
     }
 
@@ -314,8 +301,16 @@ class remember_me_observer extends base
                 '',
                 strtolower(HTTP_SERVER)
             );
+
+            // -----
+            // Special-case for localhost testing.
+            //
+            if (str_starts_with($this->domain, 'localhost')) {
+                $this->domain = '';
+            }
             $this->path = DIR_WS_CATALOG;
         }
+
         // -----
         // Starting with PHP 7.3, the setcookie function now accepts an alternate array
         // input, enabling the setting of the "SameSite" cookie attribute.
@@ -339,7 +334,7 @@ class remember_me_observer extends base
     //
     protected function debugTrace(string $message): void
     {
-        if (!$this->customerIsLoggedIn() && $this->debug) {
+        if (/*!$this->customerIsLoggedIn() && */ $this->debug) {
             error_log(date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL, 3, $this->logfilename);
         }
     }
