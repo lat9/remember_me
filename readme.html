@@ -84,8 +84,9 @@ img { margin-left: 20px; max-width: 95%; }
 </ol>
 <h3>Versions and Changes</h3>
 <ul>
-  <li>v2.1.1-beta1, 2025-02-05 (lat9):<ul>
+  <li>v2.1.1-beta1, 2025-02-06 (lat9):<ul>
     <li>BUGFIX: Class property <var>setCartId</var> must be defined prior to use or a PHP Deprecated log is created.</li>
+    <li>BUGFIX: Use now-current PHP <var>hash</var> instead of <var>md5</var> for various string hashes.</li>
     <li>The following files were changed:<ol>
         <li>/includes/classes/observers/class.remember_me_observer.php</li>
     </ol></li>

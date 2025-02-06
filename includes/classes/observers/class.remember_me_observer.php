@@ -46,7 +46,7 @@ class remember_me_observer extends base
         $this->secret = (defined('PERMANENT_LOGIN_SECRET')) ? PERMANENT_LOGIN_SECRET : '';
         $this->cookie_lifetime = ((defined('PERMANENT_LOGIN_EXPIRES') && ((int)PERMANENT_LOGIN_EXPIRES) > 0) ? ((int)PERMANENT_LOGIN_EXPIRES) : 14) * 86400;
         $this->checkbox_default = (PERMANENT_LOGIN_CHECKBOX_DEFAULT === 'true');
-        $this->cookie_name = 'zcrm_' . md5(STORE_NAME);
+        $this->cookie_name = 'zcrm_' . hash('md5', STORE_NAME);
         $this->debug = (PERMANENT_LOGIN_DEBUG === 'true');
         $this->logfilename = DIR_FS_LOGS . '/remember_me_' . date('Ym') . '.log';
 
@@ -114,7 +114,7 @@ class remember_me_observer extends base
                     if (!$password_info->EOF) {
                         $remember_me_info = [
                             'id' => $_SESSION['customer_id'],
-                            'password' => md5($this->secret . $password_info->fields['customers_password']),
+                            'password' => hash('md5', $this->secret . $password_info->fields['customers_password']),
                         ];
                         $cookie_value = $this->encodeCookie($remember_me_info);
                         $this->setCookie($cookie_value, time() + $this->cookie_lifetime);
@@ -150,7 +150,7 @@ class remember_me_observer extends base
               WHERE customers_id = $customers_id
               LIMIT 1"
         );
-        if ($customer_info->EOF || md5($this->secret . $customer_info->fields['customers_password']) !== $customers_hashed_password) {
+        if ($customer_info->EOF || hash('md5', $this->secret . $customer_info->fields['customers_password']) !== $customers_hashed_password) {
             $this->removeCookie();
         } else {
             $this->customer_remembered = true;  //- Indicates that the customer's cart should be restored once the cart is instantiated.
