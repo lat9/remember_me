@@ -25,6 +25,7 @@ class remember_me_observer extends base
     protected string $logfilename;
     protected string $domain;
     protected string $path;
+    public string $setJsFilename;
 
     public function __construct()
     {
@@ -116,6 +117,21 @@ class remember_me_observer extends base
                 $this->removeCookie();
                 break;
 
+            // -----
+            // When a customer is "remembered" and there's a javascript handler
+            // that needs to be run for square_webPay (and other) payment modules,
+            // include the required <script> processing to get that module run.
+            //
+            case 'NOTIFY_HTML_HEAD_END':
+?>
+                <script id="zcrm-setjs">
+                    $(function() {
+                        $.get('<?= HTTPS_SERVER . DIR_WS_HTTPS_CATALOG . $this->setJsFilename ?>');
+                    });
+                </script>
+<?php
+                break;
+
             default:
                 break;
         }
@@ -192,6 +208,16 @@ class remember_me_observer extends base
             $_SESSION['cart']->restore_contents();
             $_SESSION['cartID'] = $_SESSION['cart']->cartID;
             unset($_SESSION['setRememberedCart']);
+
+            // -----
+            // Since we've bypassed the login page for this customer, need
+            // to check for the presence of a file that provides a needed process
+            // for square_webPay (and possibly other) payment methods.
+            //
+            $this->setJsFilename = 'setJS.php';
+            if (file_exists(DIR_FS_CATALOG . $this->setJsFilename)) {
+                $this->attach($this, ['NOTIFY_HTML_HEAD_END']);
+            }
         }
 
     }

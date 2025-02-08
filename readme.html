@@ -64,7 +64,7 @@ img { margin-left: 20px; max-width: 95%; }
     <li>/YOUR_ADMIN/includes/functions/extra_functions/init_remember_me.php</li>
   </ol></li>
   <li>Click the &quot;Admin Home&quot; link, then click <em>Configuration :: Customer Details</em> to set the <em>Automatic Login</em> options to your liking.</li>
-  <li>If this is an initial installation, don't forget to make the plugin's <a href="https://github.com/lat9/remember_me/wiki/Required-Template-Overrides" target="_blank">required template file changes</a>!</li>
+  <li>If this is an initial installation, don't forget to make the plugin's <a href="https://github.com/lat9/remember_me/wiki/Required-Template-Overrides" target="_blank"><b>required template file changes</b></a>!</li>
 </ol>
 <p><strong>Note:</strong> This plugin also includes a SQL uninstall file, present in the root directory.  That file should not be copied to your store during the installation process.</p>
 
@@ -88,6 +88,7 @@ img { margin-left: 20px; max-width: 95%; }
     <li>BUGFIX: Use now-current PHP <var>hash</var> instead of <var>md5</var> for various string hashes.</li>
     <li>BUGFIX: <b>Remember me?</b> checkbox not visible when using Bootstrap template.</li>
     <li>BUGFIX: A remembered customer's cart isn't also remembered.</li>
+    <li>INTROP: Correct interoperation with square_webPay (and other) payment modules when a customer is 'remembered'.</li>
     <li>The following files were changed or <span class="removed">removed</span>:<ol>
         <li>/includes/auto_loaders/config.remember_me.php</li>
         <li>/includes/classes/observers/class.remember_me_observer.php</li>
