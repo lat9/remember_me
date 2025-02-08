@@ -25,7 +25,7 @@ class remember_me_observer extends base
     protected string $logfilename;
     protected string $domain;
     protected string $path;
-    public string $setJsFilename;
+    protected string $setJsFilename;
 
     public function __construct()
     {
